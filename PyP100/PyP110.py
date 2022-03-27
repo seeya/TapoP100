@@ -33,3 +33,131 @@ class P110(PyP100.P100):
         decryptedResponse = self.tpLinkCipher.decrypt(r.json()["result"]["response"])
 
         return json.loads(decryptedResponse)
+    
+    def turnOn(self):
+        URL = f"http://{self.ipAddress}/app?token={self.token}"
+        Payload = {
+            "method": "set_device_info",
+            "params":{
+                "device_on": True 
+            },
+            "requestTimeMils": int(round(time.time() * 1000)),
+            "terminalUUID": "0A950402-7224-46EB-A450-7362CDB902A2" 
+        }
+
+        headers = {
+            "Cookie": self.cookie
+        }
+
+        EncryptedPayload = self.tpLinkCipher.encrypt(json.dumps(Payload))
+
+        SecurePassthroughPayload = {
+            "method": "securePassthrough",
+            "params":{
+                "request": EncryptedPayload
+            }
+        }
+
+        r = self.session.post(URL, json=SecurePassthroughPayload, headers=headers, timeout=2)
+
+        decryptedResponse = self.tpLinkCipher.decrypt(r.json()["result"]["response"])
+
+        return json.loads(decryptedResponse) 
+
+    def turnOff(self):
+        URL = f"http://{self.ipAddress}/app?token={self.token}"
+        Payload = {
+            "method": "set_device_info",
+            "params":{
+                "device_on": False
+            },
+            "requestTimeMils": int(round(time.time() * 1000)),
+            "terminalUUID": "0A950402-7224-46EB-A450-7362CDB902A2" 
+        }
+
+        headers = {
+            "Cookie": self.cookie
+        }
+
+        EncryptedPayload = self.tpLinkCipher.encrypt(json.dumps(Payload))
+
+        SecurePassthroughPayload = {
+            "method": "securePassthrough",
+            "params":{
+                "request": EncryptedPayload
+            }
+        }
+
+        r = self.session.post(URL, json=SecurePassthroughPayload, headers=headers, timeout=2)
+
+        decryptedResponse = self.tpLinkCipher.decrypt(r.json()["result"]["response"])
+
+        return json.loads(decryptedResponse) 
+
+    def turnOnWithDelay(self, delay):
+        URL = f"http://{self.ipAddress}/app?token={self.token}"
+        Payload = {
+            "method": "add_countdown_rule",
+            "params": {
+                "delay": int(delay),
+                "desired_states": {
+                    "on": True
+                },
+                "enable": True,
+                "remain": int(delay)
+            },
+            "terminalUUID": "0A950402-7224-46EB-A450-7362CDB902A2" 
+        }
+
+        headers = {
+            "Cookie": self.cookie
+        }
+
+        EncryptedPayload = self.tpLinkCipher.encrypt(json.dumps(Payload))
+
+        SecurePassthroughPayload = {
+            "method": "securePassthrough",
+            "params": {
+                "request": EncryptedPayload
+            }
+        }
+
+        r = self.session.post(URL, json=SecurePassthroughPayload, headers=headers)
+
+        decryptedResponse = self.tpLinkCipher.decrypt(r.json()["result"]["response"])
+
+        return decryptedResponse
+
+    def turnOffWithDelay(self, delay):
+        URL = f"http://{self.ipAddress}/app?token={self.token}"
+        Payload = {
+            "method": "add_countdown_rule",
+            "params": {
+                "delay": int(delay),
+                "desired_states": {
+                    "on": False
+                },
+                "enable": True,
+                "remain": int(delay)
+            },
+            "terminalUUID": "0A950402-7224-46EB-A450-7362CDB902A2" 
+        }
+
+        headers = {
+            "Cookie": self.cookie
+        }
+
+        EncryptedPayload = self.tpLinkCipher.encrypt(json.dumps(Payload))
+
+        SecurePassthroughPayload = {
+            "method": "securePassthrough",
+            "params": {
+                "request": EncryptedPayload
+            }
+        }
+
+        r = self.session.post(URL, json=SecurePassthroughPayload, headers=headers)
+
+        decryptedResponse = self.tpLinkCipher.decrypt(r.json()["result"]["response"])
+
+        return decryptedResponse
